@@ -4,22 +4,37 @@ x = 74;
 y = 120;
 z = 25;
 
-spoolDiameter = 100;
+spoolRadius = 100;
+spoolCenterZ = spoolRadius - 7;
 spoolWidth = 62;
+spoolEdgeThickness = 4;
+spoolEdgeOffset = 0.5 * (spoolWidth - spoolEdgeThickness); 
 
-mainCutZ = spoolDiameter;
+spoolHubOR = 45;
+spoolHubIR = 26;
+
+filamentWidth = spoolWidth - (2 * spoolEdgeThickness);
+filamentOR = spoolRadius - 5;
+filamentIR = spoolHubOR;
+
 mainCutWidth = 45;
+
+floorThickness = 3;
 
 barCutSpacing = 27.3;
 barCutWidth = 5;
-barCutDepth = 8;
+barCutDepth = 3;
 barCutRadius = 0.5 * barCutWidth;
+
+wireCutY = barCutSpacing + (0.5 * y);
 
 spoolCutX = (0.5 * x) - 7;
 spoolCutWidth = 7.2;
 
+bearingRadius = 7;
+bearingCutRadius = bearingRadius + 1;
+
 bearingHoleAngle = 22;
-bearingHoleOffset = 7;
 bearingHoleRadius = 2.6;
 
 chamferRadius = 15;
@@ -27,31 +42,60 @@ chamferRadius = 15;
 difference(){
     cube([x, y, z], center = true);
     mainCut();
+    wireCuts();
     barCuts();
+    filament();
     spoolCuts();
-    bearingHoles();
+    bearingCuts();
     chamfers();
 }
 
 //spool();
+//filament();
 
 module spool()
 {
-    translate([0, 0, mainCutZ]){
+    translate([0, 0, spoolCenterZ]){
         rotate([0, 90, 0]){
-            cylinder(h = spoolWidth, r = spoolDiameter - 5, center = true);
+            union(){
+                cylinder(h = spoolWidth, r = spoolHubOR, center = true);
+                for(sO = [spoolEdgeOffset, -spoolEdgeOffset]){
+                    translate([0, 0, sO]){
+                        cylinder(h = spoolEdgeThickness, r = spoolRadius, center = true);
+                    }
+                }
+            }
+        }
+    }
+}
+
+module filament()
+{
+    translate([0, 0, spoolCenterZ]){
+        rotate([0, 90, 0]){
+            difference(){
+                cylinder(h = filamentWidth, r = filamentOR, center = true);
+                cylinder(h = filamentWidth, r = filamentIR, center = true);
+            }
         }
     }
 }
 
 module mainCut()
 {
-    translate([0, 0, mainCutZ]){
-        rotate([0, 90, 0]){
-            cylinder(h = mainCutWidth, r = 16 + spoolDiameter, center = true);
-        }
+    translate([0, 0, floorThickness]){
+        cube([mainCutWidth, 0.1 + y, z], center = true);
     }
 }
+
+module wireCuts()
+{
+    for(wY = [wireCutY, -wireCutY]){
+        translate([0, wY, 0]){
+            cube([mainCutWidth, 0.1 + y, z], center = true);
+        }
+    }
+}    
 
 module barCuts()
 {
@@ -72,22 +116,29 @@ module barCuts()
 module spoolCuts()
 {
     for(sX = [spoolCutX, -spoolCutX]){
-        translate([sX, 0, mainCutZ]){
+        translate([sX, 0, spoolCenterZ]){
             rotate([0, 90, 0]){
-                cylinder(h = spoolCutWidth, r = 20 + spoolDiameter, center = true);
+                cylinder(h = spoolCutWidth, r = bearingRadius + spoolRadius, center = true);
             }
         }
     }
-    spool();
 }
 
-module bearingHoles(){
-    translate([0, 0, mainCutZ]){
+module bearingCuts()
+{
+    translate([0, 0, spoolCenterZ]){
         for(bA = [bearingHoleAngle, -bearingHoleAngle]){
             rotate([bA, 0, 0]){
-                translate([0, 0, -spoolDiameter - bearingHoleOffset]){
+                translate([0, 0, -spoolRadius - bearingRadius]){
                     rotate([0, 90, 0]){
-                        cylinder(h = 0.1 + x, r = bearingHoleRadius, center = true);
+                        union(){
+                            cylinder(h = 0.1 + x, r = bearingHoleRadius, center = true);
+                            for(bO = [spoolCutX, -spoolCutX]){
+                                translate([0, 0, bO]){
+                                    cylinder(h = spoolCutWidth, r = bearingCutRadius, center = true);
+                                }
+                            }
+                        }
                     }
                 }
             }
