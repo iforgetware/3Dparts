@@ -8,4 +8,4 @@ jackStand and yHolder are for working on the printer. If you have a working 3D p
 
 footMount and spoolHolder are specific to my shelf unit that the printer sits on. It's pretty generic with sdjustable shelves with rails made of C-channel and 5mm rods for the surface. Pics to follow. These files should also be easy to modify for fit.
 
-piMount is a plate that bolts in the LCD openning.  It hangs a raspberryPi and provides bulkhead mounts for network, usb power, and a pair of PowerPole connectors to monitor PSU voltage.
+piMount is a plate that bolts in the LCD openning.  It hangs a raspberryPi and provides bulkhead mounts for network, usb power, and a pair of PowerPole connectors to monitor PSU voltage.  ppBrace screws between the PowerPole connectors to hold them in place.
