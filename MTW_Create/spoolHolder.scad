@@ -2,10 +2,10 @@ $fn = 90;
 
 x = 74;
 y = 120;
-z = 25;
+z = 35;
 
 spoolRadius = 100;
-spoolCenterZ = spoolRadius - 7;
+spoolCenterZ = spoolRadius - 11;//6;
 spoolWidth = 62;
 spoolEdgeThickness = 4;
 spoolEdgeOffset = 0.5 * (spoolWidth - spoolEdgeThickness); 
@@ -14,7 +14,7 @@ spoolHubOR = 45;
 spoolHubIR = 26;
 
 filamentWidth = spoolWidth - (2 * spoolEdgeThickness);
-filamentOR = spoolRadius - 5;
+filamentOR = spoolRadius - 2;
 filamentIR = spoolHubOR;
 
 mainCutWidth = 45;
@@ -37,7 +37,10 @@ bearingCutRadius = bearingRadius + 1;
 bearingHoleAngle = 22;
 bearingHoleRadius = 2.6;
 
-chamferRadius = 15;
+chamferRadius = 30;
+
+finalCutWidth = x - 6.8;
+finalCutZ = 14;
 
 difference(){
     cube([x, y, z], center = true);
@@ -48,6 +51,7 @@ difference(){
     spoolCuts();
     bearingCuts();
     chamfers();
+    finalCut();
 }
 
 //spool();
@@ -75,7 +79,7 @@ module filament()
         rotate([0, 90, 0]){
             difference(){
                 cylinder(h = filamentWidth, r = filamentOR, center = true);
-                cylinder(h = filamentWidth, r = filamentIR, center = true);
+                cylinder(h = 0.1 + filamentWidth, r = filamentIR, center = true);
             }
         }
     }
@@ -162,5 +166,12 @@ module chamfers(){
                 }
             }
         }
+    }
+}
+
+module finalCut()
+{
+    translate([0, 0, finalCutZ]){
+        cube([finalCutWidth, 0.1 + y, z], center = true);
     }
 }

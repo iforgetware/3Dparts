@@ -1,20 +1,21 @@
 $fn = 90;
 
 mpWidth = 155; // x
-mpDepth = 133; // y
-mpHeight = 1.8;  // z
+mpDepth = 135; // y
+mpHeight = 4;  // z
 
 mountHoleXs = [60 - (0.5 * mpWidth), 5 - (0.5 * mpWidth)];
-mountHoleYs = [62, -62];
+mountHoleYs = [63.5, -63.5];
 
 mwT = 4; // double thickness of walls for mounts
          // ie: mwT = 4 means 2mm thick walls
+mountOffset = -0.5 * mpHeight;
 
 portX = 32.5 - (0.5 * mpWidth);
 rj45X = portX;
-rj45Y = 36;
+rj45Y = 40;
 rj45Width = 40;
-rj45Depth = 25;
+rj45Depth = 30;
 rj45CutoutWidth = 16;
 rj45CutoutHeight = 14;
 rj45CutoutOffset = 1.5;
@@ -22,21 +23,21 @@ rj45ScrewXs = [13.5, -13.5];
 rj45ScrewRadius = 1.8;
 
 usbX = portX;
-usbY = 0;
+usbY = 3;
 usbWidth = 40;
-usbDepth = 15;
+usbDepth = 25;
 usbCutoutWidth = 14;
 usbCutoutHeight = 8.5;
 usbScrewXs = [13.5, -13.5];
 usbScrewRadius = 1.8;
 
 ppX = portX;
-ppY = -36;
+ppY = -38;
 ppWidth = 35;
-ppDepth = 30;
+ppDepth = 35;
 ppCutoutWidth = 27;
 ppCutoutHeight = 7;
-ppScrewZs = [8, -8];
+ppScrewZs = [9, -9];
 ppScrewRadius = 1.3;
 
 piPXs = [(0.5 * mpWidth) - 7, (0.5 * mpWidth) - 56];
@@ -53,14 +54,6 @@ difference(){
             mainPlane();
             mountHoles();
         }
-        
-        
-        // these mount cuts need to be moved up 1/2 mpHeight
-        // to get rid of the overhangs
-        
-        
-        
-        
         rj45Mount();
         usbMount();
         ppMount();
@@ -100,7 +93,7 @@ module mountHoles()
     for(mX = mountHoleXs){
         for(mY = mountHoleYs){
             translate([mX, mY, 0]){
-                cylinder(h = 2.1, r = 1.7, center = true);
+                cylinder(h = 0.1 + mpHeight, r = 1.7, center = true);
             }
         }
     }
@@ -133,7 +126,7 @@ module piCut()
 
 module rj45Frame()
 {
-    translate([rj45X, rj45Y, 0]){
+    translate([rj45X, rj45Y, mountOffset]){
         rotate([45, 0, 0]){
             cube([rj45Width, rj45Depth, rj45Depth], center = true);
         }
@@ -144,7 +137,7 @@ module rj45Mount()
 {
     difference(){
         rj45Frame();
-        translate([rj45X, rj45Y, 0]){
+        translate([rj45X, rj45Y, mountOffset]){
             rotate([-45, 0, 0]){
                 union(){
                     cube([rj45Width - mwT, rj45Depth - mwT, rj45Depth - mwT], center = true);
@@ -166,7 +159,7 @@ module rj45Mount()
 
 module usbFrame()
 {
-    translate([usbX, usbY, 0]){
+    translate([usbX, usbY, mountOffset]){
         rotate([45, 0, 0]){
             cube([usbWidth, usbDepth, usbDepth], center = true);
         }
@@ -177,7 +170,7 @@ module usbMount()
 {
     difference(){
         usbFrame();
-            translate([usbX, usbY, 0]){
+            translate([usbX, usbY, mountOffset]){
             rotate([-45, 0, 0]){
                 union(){
                     cube([usbWidth - mwT, usbDepth - mwT, usbDepth - mwT], center = true);
@@ -197,7 +190,7 @@ module usbMount()
 
 module ppFrame()
 {
-    translate([ppX, ppY, 0]){
+    translate([ppX, ppY, mountOffset]){
         rotate([45, 0, 0]){
             cube([ppWidth, ppDepth, ppDepth], center = true);
         }
@@ -208,7 +201,7 @@ module ppMount()
 {
     difference(){
         ppFrame();
-            translate([ppX, ppY, 0]){
+            translate([ppX, ppY, mountOffset]){
             rotate([-45, 0, 0]){
                 union(){
                     cube([ppWidth - mwT, ppDepth - mwT, ppDepth - mwT], center = true);
